@@ -105,13 +105,13 @@ namespace impfile {
 
 	Result parseVariable(Variable &var, std::stringstream &stream) 
 	{
-		Variable v;
+		Variable v = Variable("", "");
 		char c;
 		std::string* readinto = &v.first;
 		//If quotecount is odd, that means we are in a quote
 		//If it is even, we are outside of a quote
 		int quotecount = 0;
-		while(c != ';' && stream.get(c)) {
+		while(stream.get(c) && c != ';') {
 			//We hit the end, continue
 			if(c == ';' && quotecount % 2 == 0)
 				continue;
@@ -172,13 +172,6 @@ namespace impfile {
 			entryContent << c;
 		
 		while(entryContent.rdbuf()->in_avail()) {
-			//For some weird reason the code did not work parsing variables
-			//but when I just randomly put this here it magically worked for
-			//some weird reason. I don't know why - it seemed fine on the
-			//tests but when I tried adding it to the application it just
-			//seemed to not work.
-			entryContent.str(); //Anyway, don't delete this
-
 			Variable v;
 			res = parseVariable(v, entryContent);
 			if(res.isError()) {
